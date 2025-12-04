@@ -52,8 +52,7 @@ pub fn run(file: &str) {
     let mut erg_1 = 0;
     let mut erg_2 = 0;
 
-    by_line(file, |line| {
-        let chars: Vec<_> = line.bytes().collect();
+    by_line(file, None, |chars| {
         let left = chars[0] == b'L';
         let mut count: i32 = (chars[1] - b'0').into();
         if let Some(c) = chars.get(2) {

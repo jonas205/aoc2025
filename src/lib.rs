@@ -3,15 +3,23 @@ use std::{
     io::{self, BufRead},
 };
 
-pub fn by_line<F>(file: &str, mut f: F)
+/// # Panics
+///
+/// Will panic if the input file does not exist
+pub fn by_line<F>(file: &str, delim: Option<u8>, mut f: F)
 where
-    F: FnMut(&str),
+    F: FnMut(Vec<u8>),
 {
     let file = File::open(file).unwrap_or_else(|e| panic!("Can not open input file {file}: {e}"));
-    let lines = io::BufReader::new(file).lines();
+    let reader = io::BufReader::new(file);
 
-    // Consumes the iterator, returns an (Optional) String
-    for line in lines.map_while(Result::ok) {
-        f(&line);
+    if let Some(c) = delim {
+        for line in reader.split(c).map_while(Result::ok) {
+            f(line);
+        }
+    } else {
+        for line in reader.lines().map_while(Result::ok) {
+            f(line.into());
+        }
     }
 }
