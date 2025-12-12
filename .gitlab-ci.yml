@@ -1,0 +1,12 @@
+script:
+  stage: test
+  script:
+    - apt-get -y update
+    - apt-get -y install curl gcc
+    - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > rustup.sh
+    - chmod +x ./rustup.sh
+    - ./rustup.sh -y
+    - PATH="$HOME/.cargo/bin:$PATH"
+    - cargo build --verbose
+    - cargo clippy --verbose -- -D warnings -W clippy::pedantic
+    - cargo test --verbose
